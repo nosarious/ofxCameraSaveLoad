@@ -165,31 +165,37 @@ bool ofxLoadCamera(ofEasyCam & cam, string loadPath){
 
     if(loadOfCam((ofCamera &)cam, loadPath)){
         ofBuffer buffer = ofBufferFromFile(loadPath);
-         while (!buffer.isLastLine()) {
-            string line = buffer.getNextLine();
+		ofBuffer::Lines lines = buffer.getLines();
+		for (ofBuffer::Line currLine = lines.begin(); currLine != lines.end(); ++currLine) {
+			string line = currLine.asString();
             
             if (line == "target") {
-                vector<string> vals = ofSplitString(buffer.getNextLine(), ", ");
+				line = (++currLine).asString();
+                vector<string> vals = ofSplitString(line, ", ");
                 if (vals.size()==3) {
                     cam.getTarget().setPosition(ofVec3f(ofToFloat(vals[0]), ofToFloat(vals[1]), ofToFloat(vals[2])));
                 }
             }
             else if(line == "drag"){
-                cam.setDrag(ofToFloat(buffer.getNextLine()));
+				line = (++currLine).asString();
+                cam.setDrag(ofToFloat(line));
             }else if(line == "bEnableMouseMiddleButton"){
-                if(ofToBool(buffer.getNextLine())){
+				line = (++currLine).asString();
+                if(ofToBool(line)){
                     cam.enableMouseMiddleButton();
                 }else{
                     cam.disableMouseMiddleButton();
                 }
             }else if(line == "bMouseInputEnabled"){
-                if(ofToBool(buffer.getNextLine())){
+				line = (++currLine).asString();
+                if(ofToBool(line)){
                     cam.enableMouseInput();
                 }else{
                     cam.disableMouseInput();
                 }
             }else if(line == "doTranslationKey"){
-                cam.setTranslationKey(ofToChar(buffer.getNextLine()));
+				line = (++currLine).asString();
+                cam.setTranslationKey(ofToChar(line));
             }
         }
         return true;
